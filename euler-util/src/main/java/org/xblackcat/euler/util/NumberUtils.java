@@ -14,4 +14,12 @@ public class NumberUtils {
         }
         return sum;
     }
+
+    public static long sumNumber(long till) {
+        if ((till & 1) == 0) {
+            return (till >> 1) * (till + 1);
+        } else {
+            return ((till + 1) >> 1) * till;
+        }
+    }
 }
