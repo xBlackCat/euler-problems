@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/euler-util.iml" filepath="$PROJECT_DIR$/.idea/modules/euler-util.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-1.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-2.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-387.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-387.iml" />
     </modules>
   </component>
