@@ -1,6 +1,8 @@
 package org.xblackcat.euler.problem2;
 
 /**
+ * https://projecteuler.net/problem=2
+ *
  * 16.11.2017 16:27
  *
  * @author xBlackCat
