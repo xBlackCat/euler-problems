@@ -32,6 +32,21 @@ public class PrimalCache {
         return result;
     }
 
+    public TLongSet getPrimalsTill(long number) {
+        TLongSet primals = new TLongHashSet();
+        if (number > 2) {
+            primals.add(2);
+            long n = 3;
+            while (n < number) {
+                if (checkPrimal(n)) {
+                    primals.add(n);
+                }
+                n += 2;
+            }
+        }
+        return primals;
+    }
+
     private void doFactorize(TLongSet result, long number) {
         if (number <= 0) {
             return;

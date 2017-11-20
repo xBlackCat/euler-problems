@@ -1,7 +1,7 @@
 package org.xblackcat.euler.problem4;
 
 /**
- * https://projecteuler.net/problem=3
+ * https://projecteuler.net/problem=4
  * <p>
  * 16.11.2017 16:27
  *
