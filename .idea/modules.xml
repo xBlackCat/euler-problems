@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/euler-util.iml" filepath="$PROJECT_DIR$/.idea/modules/euler-util.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-1.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-2.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-2.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-3.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-3.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-387.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-387.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/problem-4.iml" filepath="$PROJECT_DIR$/.idea/modules/problem-4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/euler-problems.iml" filepath="$PROJECT_DIR$/.idea/modules/euler-problems.iml" />
     </modules>
   </component>
 </project>
