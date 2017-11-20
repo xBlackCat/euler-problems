@@ -22,4 +22,12 @@ public class NumberUtils {
             return ((till + 1) >> 1) * till;
         }
     }
+
+    public static long sumSquares(long till) {
+        if ((till & 1) == 0) {
+            return (till >> 1) * (till + 1) * (2 * till + 1) / 3;
+        } else {
+            return ((till + 1) >> 1) * till * (2 * till + 1) / 3;
+        }
+    }
 }
