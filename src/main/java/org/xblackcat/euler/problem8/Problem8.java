@@ -1,6 +1,5 @@
 package org.xblackcat.euler.problem8;
 
-import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -47,13 +46,13 @@ public class Problem8 {
         int seriesStart = 0;
         int limit = BLOCK.length() - seriesLength;
 
-        SortedSet<S> series = new TreeSet<>();
+        SortedSet<Series> series = new TreeSet<>();
         String possibleSeries = BLOCK.substring(0, seriesLength);
         int zeroIdx = possibleSeries.indexOf('0');
         if (zeroIdx >= 0) {
             seriesStart = zeroIdx + 1;
         } else {
-            series.add(new S(possibleSeries));
+            series.add(new Series(possibleSeries));
             seriesStart++;
         }
         while (seriesStart < limit) {
@@ -63,69 +62,11 @@ public class Problem8 {
                 // Too lazy to check zero in the series after jump
                 continue;
             }
-            series.add(new S(BLOCK.substring(seriesStart, seriesStart + seriesLength)));
+            series.add(new Series(BLOCK.substring(seriesStart, seriesStart + seriesLength)));
             seriesStart++;
         }
 
         return series.last().multiply();
     }
 
-    private class S implements Comparable<S> {
-        private final byte[] factors;
-
-        private S(String part) {
-            int length = part.length();
-            factors = new byte[length];
-            for (int i = 0; i < length; i++) {
-                factors[i] = (byte) (part.charAt(i) - '0');
-            }
-            Arrays.sort(factors);
-        }
-
-        public long multiply() {
-            long m = 1;
-            for (byte f : factors) {
-                m *= f;
-            }
-            return m;
-        }
-
-        @Override
-        public int compareTo(S o) {
-            for (int i = 0; i < factors.length; i++) {
-                int c = factors[i] - o.factors[i];
-                if (c != 0) {
-                    return c;
-                }
-            }
-            return 0;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            final S s = (S) o;
-            return Arrays.equals(factors, s.factors);
-        }
-
-        @Override
-        public int hashCode() {
-            return Arrays.hashCode(factors);
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder str = new StringBuilder();
-            for (byte f : factors) {
-                str.append((char) ('0' + f));
-                str.append('*');
-            }
-            return str.substring(0, str.length());
-        }
-    }
 }

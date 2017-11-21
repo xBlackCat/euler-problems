@@ -35,5 +35,4 @@ public class Problem9 {
         }
         throw new RuntimeException("Never should be");
     }
-
 }
