@@ -1,17 +1,21 @@
 package org.xblackcat.euler.util;
 
 import gnu.trove.iterator.TLongByteIterator;
+import gnu.trove.iterator.TLongIterator;
 import gnu.trove.map.TLongByteMap;
 import gnu.trove.map.hash.TLongByteHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
+
+import java.util.Iterator;
+import java.util.stream.LongStream;
 
 /**
  * 15.11.2017 16:41
  *
  * @author xBlackCat
  */
-public class PrimalCache {
+public class PrimalCache implements Iterable<Long> {
     private final TLongByteMap foundPrimals = new TLongByteHashMap(
             new long[]{1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19},
             new byte[]{0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1}
@@ -24,6 +28,20 @@ public class PrimalCache {
 //                "[-] Number " + num + " has been checked for primal [" + primal + "] in " + (System.currentTimeMillis() - start)
 //        );
         return primal;
+    }
+
+    public TLongIterator longIterator() {
+        return new PrimalTIterator();
+    }
+
+    @Override
+    public Iterator<Long> iterator() {
+        return new PrimalIterator();
+    }
+
+    public LongStream primalStream() {
+        PrimalGenerator generator = new PrimalGenerator();
+        return LongStream.generate(generator::nextPrimal);
     }
 
     public TLongSet factorize(long number) {
@@ -113,5 +131,44 @@ public class PrimalCache {
 
         foundPrimals.put(num, (byte) 1);
         return true;
+    }
+
+    private class PrimalTIterator extends PrimalGenerator implements TLongIterator {
+        @Override
+        public long next() {
+            return nextPrimal();
+        }
+    }
+
+    private class PrimalIterator extends PrimalGenerator implements Iterator<Long> {
+        @Override
+        public Long next() {
+            return nextPrimal();
+        }
+
+    }
+
+    private class PrimalGenerator {
+        private long lastPrimal = 1;
+
+        protected long nextPrimal() {
+            do {
+                if (lastPrimal > 2) {
+                    lastPrimal += 2;
+                } else {
+                    lastPrimal++;
+                }
+            } while (!checkPrimal(lastPrimal));
+
+            return lastPrimal;
+        }
+
+        public boolean hasNext() {
+            return true;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
