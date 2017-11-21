@@ -21,18 +21,6 @@ public class Problem7 {
 
     public long nthPrime(int nthPrime) {
         PrimalCache primalCache = new PrimalCache();
-        if (nthPrime == 1) {
-            return 2;
-        }
-        int counter = 1;
-        long test = 1;
-        while (counter < nthPrime) {
-            test += 2;
-            if (primalCache.isPrimal(test)) {
-                counter++;
-            }
-
-        }
-        return test;
+        return primalCache.primalStream().skip(nthPrime - 1).findFirst().orElse(0);
     }
 }
