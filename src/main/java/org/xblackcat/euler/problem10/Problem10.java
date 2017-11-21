@@ -1,24 +1,21 @@
 package org.xblackcat.euler.problem10;
 
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
 
 /**
- * https://projecteuler.net/problem=5
+ * https://projecteuler.net/problem=10
  * <p>
  * 16.11.2017 16:27
  *
  * @author xBlackCat
  */
+@InputData("2000000")
+@ResultDescription("Sum of all the primes below {1,number,#} is {0,number,#}")
 public class Problem10 {
-    public static void main(String[] args) {
-        int till = 2_000_000;
-        long start = System.currentTimeMillis();
-        final Problem10 p = new Problem10();
-        System.out.println(
-                "Sum of all the primes below  " + till + " is " + p.primalSum(till) +
-                        " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long primalSum(long till) {
         PrimalCache primalCache = new PrimalCache();
 

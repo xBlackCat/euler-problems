@@ -1,5 +1,8 @@
 package org.xblackcat.euler.problem387;
 
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
 
 /**
@@ -9,16 +12,12 @@ import org.xblackcat.euler.util.PrimalCache;
  *
  * @author xBlackCat
  */
+@InputData("100000000000000")
+@ResultDescription("Sum of the strong, right truncatable Harshad primes less than {1,number,#} is {0,number,#}")
 public class Problem387 {
     private PrimalCache primalCache = new PrimalCache();
 
-    public static void main(String[] args) {
-        long limit = 100_000_000_000_000L;
-        long start = System.currentTimeMillis();
-        final Problem387 p = new Problem387();
-        System.out.println("Sum till " + limit + ": " + p.sumRecursiveStart(limit) + " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long sumRecursiveStart(long limit) {
         long sum = 0;
 

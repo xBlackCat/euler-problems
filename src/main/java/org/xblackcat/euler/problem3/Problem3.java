@@ -1,6 +1,9 @@
 package org.xblackcat.euler.problem3;
 
 import gnu.trove.set.TLongSet;
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
 import org.xblackcat.euler.util.TUtils;
 
@@ -11,15 +14,10 @@ import org.xblackcat.euler.util.TUtils;
  *
  * @author xBlackCat
  */
+@ResultDescription("Largest prime factor for {1,number,#}: {0,number,#}")
+@InputData("600851475143")
 public class Problem3 {
-    public static void main(String[] args) {
-        long limit = 600851475143L;
-        long start = System.currentTimeMillis();
-        final Problem3 p = new Problem3();
-        System.out.println("Largest prime factor for  " + limit + ": " + p.largestPrimeFactor(limit) + " in " +
-                                   (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long largestPrimeFactor(long number) {
         final PrimalCache primals = new PrimalCache();
 

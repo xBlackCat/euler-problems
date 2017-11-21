@@ -1,22 +1,22 @@
 package org.xblackcat.euler.problem2;
 
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
+
 /**
  * https://projecteuler.net/problem=2
- *
+ * <p>
  * 16.11.2017 16:27
  *
  * @author xBlackCat
  */
+@InputData("4000000")
+@ResultDescription("Sum of Fibonacci numbers till {1,number,#}: {0,number,#}")
 public class Problem2 {
-    public static void main(String[] args) {
-        long limit = 4_000_000;
-        long start = System.currentTimeMillis();
-        final Problem2 p = new Problem2();
-        System.out.println("Sum till " + limit + ": " + p.sumOfFNumbers(limit) + " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long sumOfFNumbers(long limit) {
-        long a = 1;
+        long a;
         long b = 1;
         long c = 2;
         long sum = 0;

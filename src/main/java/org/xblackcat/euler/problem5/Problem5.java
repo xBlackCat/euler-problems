@@ -4,6 +4,9 @@ import gnu.trove.iterator.TLongIntIterator;
 import gnu.trove.map.TLongIntMap;
 import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.set.TLongSet;
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
 
 /**
@@ -13,16 +16,10 @@ import org.xblackcat.euler.util.PrimalCache;
  *
  * @author xBlackCat
  */
+@InputData("20")
+@ResultDescription("Smallest number that can be divided by each of the numbers from 1 till {1} is {0,number,#}")
 public class Problem5 {
-    public static void main(String[] args) {
-        long till = 20;
-        long start = System.currentTimeMillis();
-        final Problem5 p = new Problem5();
-        System.out.println(
-                "smallest number that can be divided by each of the numbers from 1 till " + till + ": " + p.smallestNumber(till) +
-                        " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long smallestNumber(long till) {
         TLongIntMap factors = new TLongIntHashMap();
         PrimalCache primalCache = new PrimalCache();

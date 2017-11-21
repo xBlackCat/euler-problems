@@ -1,5 +1,8 @@
 package org.xblackcat.euler.problem1;
 
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.NumberUtils;
 
 /**
@@ -7,14 +10,10 @@ import org.xblackcat.euler.util.NumberUtils;
  *
  * @author xBlackCat
  */
+@InputData("1000")
+@ResultDescription("Sum triples and fives till {1,number,#}: {0,number,#}")
 public class Problem1 {
-    public static void main(String[] args) {
-        long limit = 1000;
-        long start = System.currentTimeMillis();
-        final Problem1 p = new Problem1();
-        System.out.println("Sum till " + limit + ": " + p.sumOfNumbers(limit) + " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long sumOfNumbers(long num) {
         long triples = (num - 1) / 3;
         long fives = (num - 1) / 5;

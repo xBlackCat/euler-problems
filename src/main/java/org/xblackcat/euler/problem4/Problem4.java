@@ -1,5 +1,9 @@
 package org.xblackcat.euler.problem4;
 
+import org.xblackcat.euler.ann.EntryPoint;
+import org.xblackcat.euler.ann.InputData;
+import org.xblackcat.euler.ann.ResultDescription;
+
 /**
  * https://projecteuler.net/problem=4
  * <p>
@@ -7,16 +11,10 @@ package org.xblackcat.euler.problem4;
  *
  * @author xBlackCat
  */
+@InputData("3")
+@ResultDescription("Largest palindrome product for {1} digits: {0,number,#}")
 public class Problem4 {
-    public static void main(String[] args) {
-        int digits = 3;
-        long start = System.currentTimeMillis();
-        final Problem4 p = new Problem4();
-        System.out.println(
-                "Largest palindrome product for  " + digits + " digits: " + p.largestPalindromeWithFactorOfDigits(digits) +
-                        " in " + (System.currentTimeMillis() - start) + " ms");
-    }
-
+    @EntryPoint
     public long largestPalindromeWithFactorOfDigits(int digits) {
         final long powLower = (long) (Math.pow(10, digits - 1));
         final long pow = (long) (Math.pow(10, digits));
