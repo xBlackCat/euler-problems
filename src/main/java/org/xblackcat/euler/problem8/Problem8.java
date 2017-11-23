@@ -3,6 +3,7 @@ package org.xblackcat.euler.problem8;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
+import org.xblackcat.euler.util.Series;
 
 import java.util.SortedSet;
 import java.util.TreeSet;

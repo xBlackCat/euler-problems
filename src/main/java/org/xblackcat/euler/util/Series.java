@@ -1,4 +1,4 @@
-package org.xblackcat.euler.problem8;
+package org.xblackcat.euler.util;
 
 import java.util.Arrays;
 
@@ -7,21 +7,25 @@ import java.util.Arrays;
  *
  * @author xBlackCat
  */
-class Series implements Comparable<Series> {
-    private final byte[] factors;
+public class Series implements Comparable<Series> {
+    private final int[] factors;
 
-    Series(String part) {
+    public Series(String part) {
         int length = part.length();
-        factors = new byte[length];
+        factors = new int[length];
         for (int i = 0; i < length; i++) {
             factors[i] = (byte) (part.charAt(i) - '0');
         }
         Arrays.sort(factors);
     }
 
+    public Series(int... factors) {
+        this.factors = factors;
+    }
+
     public long multiply() {
         long m = 1;
-        for (byte f : factors) {
+        for (int f : factors) {
             m *= f;
         }
         return m;
@@ -58,8 +62,8 @@ class Series implements Comparable<Series> {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
-        for (byte f : factors) {
-            str.append((char) ('0' + f));
+        for (int f : factors) {
+            str.append(f);
             str.append('*');
         }
         return str.substring(0, str.length());
