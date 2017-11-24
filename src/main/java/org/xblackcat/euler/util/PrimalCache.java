@@ -1,6 +1,5 @@
 package org.xblackcat.euler.util;
 
-import gnu.trove.iterator.TLongByteIterator;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
@@ -18,6 +17,8 @@ import java.util.stream.LongStream;
  * @author xBlackCat
  */
 public class PrimalCache implements Iterable<Long> {
+    private final long[] firstPrimals = new long[]{2, 3, 5, 7, 11, 13, 17, 19};
+
     private final TLongByteMap foundPrimals = new TLongByteHashMap(
             new long[]{1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19},
             new byte[]{0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1}
@@ -83,37 +84,28 @@ public class PrimalCache implements Iterable<Long> {
             return;
         }
 
-        final TLongByteIterator it = foundPrimals.iterator();
         long limit = (long) Math.sqrt(number);
-        long largestPrimal = 2;
-        while (it.hasNext()) {
-            it.advance();
-
-            if (it.value() == 0) {
-                continue;
-            }
-
-            final long factor = it.key();
-            if (largestPrimal < factor) {
-                largestPrimal = factor;
+        for (long factor : firstPrimals) {
+            if (factor > limit) {
+                return;
             }
             if (number % factor == 0) {
                 result.add(factor);
                 doFactorize(result, number / factor);
-                break;
+                return;
             }
         }
 
-        if (largestPrimal < limit) {
-            do {
-                largestPrimal += 2;
-                if (checkPrimal(largestPrimal)) {
-                    if (number % largestPrimal == 0) {
-                        result.add(largestPrimal);
-                        doFactorize(result, number / largestPrimal);
-                    }
+        long largestPrimal = 23;
+        while (largestPrimal < limit) {
+            if (checkPrimal(largestPrimal)) {
+                if (number % largestPrimal == 0) {
+                    result.add(largestPrimal);
+                    doFactorize(result, number / largestPrimal);
+                    return;
                 }
-            } while (largestPrimal < limit);
+            }
+            largestPrimal += 2;
         }
     }
 

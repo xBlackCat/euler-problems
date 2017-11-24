@@ -59,5 +59,6 @@ public class PrimalCacheTest {
         Assert.assertEquals(new TLongArrayList(new long[]{2, 5}), primal.factorize(10));
         Assert.assertEquals(new TLongArrayList(new long[]{2, 2, 5, 5}), primal.factorize(100));
         Assert.assertEquals(new TLongArrayList(new long[]{53}), primal.factorize(53));
+        Assert.assertEquals(new TLongArrayList(new long[]{2, 2, 3, 3, 5, 11, 19, 47}), primal.factorize(1768140));
     }
 }
