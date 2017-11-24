@@ -2,6 +2,8 @@ package org.xblackcat.euler.util;
 
 import gnu.trove.iterator.TLongByteIterator;
 import gnu.trove.iterator.TLongIterator;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongByteMap;
 import gnu.trove.map.hash.TLongByteHashMap;
 import gnu.trove.set.TLongSet;
@@ -44,9 +46,16 @@ public class PrimalCache implements Iterable<Long> {
         return LongStream.generate(generator::nextPrimal);
     }
 
-    public TLongSet factorize(long number) {
-        TLongSet result = new TLongHashSet();
+    /**
+     * Returns primal factors of the number in natural order. If the number is primal - return it
+     *
+     * @param number number to factorize
+     * @return factors of the number in natural order
+     */
+    public TLongList factorize(long number) {
+        TLongList result = new TLongArrayList();
         doFactorize(result, number);
+        result.sort();
         return result;
     }
 
@@ -65,7 +74,7 @@ public class PrimalCache implements Iterable<Long> {
         return primals;
     }
 
-    private void doFactorize(TLongSet result, long number) {
+    private void doFactorize(TLongList result, long number) {
         if (number <= 0) {
             return;
         }

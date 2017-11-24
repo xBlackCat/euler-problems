@@ -1,6 +1,6 @@
 package org.xblackcat.euler.util;
 
-import gnu.trove.set.hash.TLongHashSet;
+import gnu.trove.list.array.TLongArrayList;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -56,8 +56,8 @@ public class PrimalCacheTest {
     public void factorize() {
         final PrimalCache primal = new PrimalCache();
 
-        Assert.assertEquals(new TLongHashSet(new long[]{2, 5}), primal.factorize(10));
-        Assert.assertEquals(new TLongHashSet(new long[]{2, 2, 5, 5}), primal.factorize(100));
-        Assert.assertEquals(new TLongHashSet(new long[]{53}), primal.factorize(53));
+        Assert.assertEquals(new TLongArrayList(new long[]{2, 5}), primal.factorize(10));
+        Assert.assertEquals(new TLongArrayList(new long[]{2, 2, 5, 5}), primal.factorize(100));
+        Assert.assertEquals(new TLongArrayList(new long[]{53}), primal.factorize(53));
     }
 }

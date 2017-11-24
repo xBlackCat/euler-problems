@@ -1,11 +1,10 @@
 package org.xblackcat.euler.problem3;
 
-import gnu.trove.set.TLongSet;
+import gnu.trove.list.TLongList;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
-import org.xblackcat.euler.util.TUtils;
 
 /**
  * https://projecteuler.net/problem=3
@@ -21,8 +20,8 @@ public class Problem3 {
     public long largestPrimeFactor(long number) {
         final PrimalCache primals = new PrimalCache();
 
-        final TLongSet set = primals.factorize(number);
+        final TLongList set = primals.factorize(number);
 
-        return TUtils.max(set);
+        return set.get(set.size() - 1);
     }
 }
