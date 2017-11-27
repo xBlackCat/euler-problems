@@ -9,6 +9,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
+ * https://projecteuler.net/problem=11
+ * <p>
  * 23.11.217 16:59
  *
  * @author xBlackCat

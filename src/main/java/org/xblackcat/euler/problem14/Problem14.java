@@ -7,6 +7,8 @@ import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
 
 /**
+ * https://projecteuler.net/problem=14
+ * <p>
  * 25.11.2017 12:33
  *
  * @author xBlackCat

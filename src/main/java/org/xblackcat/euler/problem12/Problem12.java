@@ -9,6 +9,8 @@ import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.PrimalCache;
 
 /**
+ * https://projecteuler.net/problem=10
+ * <p>
  * 24.11.2017 8:29
  *
  * @author xBlackCat
