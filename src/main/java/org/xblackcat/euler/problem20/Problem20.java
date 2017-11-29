@@ -9,6 +9,8 @@ import org.xblackcat.euler.util.NumberUtils;
 import java.math.BigInteger;
 
 /**
+ * https://projecteuler.net/problem=20
+ * <p>
  * 28.11.2017 12:36
  *
  * @author xBlackCat

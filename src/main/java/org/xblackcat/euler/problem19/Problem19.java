@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
+ * https://projecteuler.net/problem=19
+ * <p>
  * 28.11.2017 12:23
  *
  * @author xBlackCat
