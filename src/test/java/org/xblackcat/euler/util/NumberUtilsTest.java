@@ -22,4 +22,11 @@ public class NumberUtilsTest {
         Assert.assertEquals(14, NumberUtils.sumSquares(3));
         Assert.assertEquals(385, NumberUtils.sumSquares(10));
     }
+
+    @Test
+    public void getPeriod() {
+        Assert.assertEquals("3", NumberUtils.getPeriod(3));
+        Assert.assertEquals("142857", NumberUtils.getPeriod(7));
+        Assert.assertEquals("0344827586206896551724137931", NumberUtils.getPeriod(29));
+    }
 }

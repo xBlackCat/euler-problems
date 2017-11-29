@@ -54,4 +54,40 @@ public class NumberUtils {
         }
         return numbers;
     }
+
+    public static String getPeriod(long num) {
+        return getPeriod(num, 10);
+    }
+
+    public static String getPeriod(long num, int base) {
+        long n = base;
+
+        StringBuilder fraction = new StringBuilder();
+        SearchLoop:
+        while (true) {
+            while (n < num) {
+                n *= base;
+                fraction.append('0');
+            }
+            long d = n / num;
+            fraction.append((char) ('0' + d));
+            n %= num;
+            if (n == 0) {
+                return "";
+            }
+            n *= base;
+            if ((fraction.length() & 1) == 0) {
+                // Check if we reach period
+                int length = fraction.length() >> 1;
+                for (int i = 0; i < length; i++) {
+                    if (fraction.charAt(i) != fraction.charAt(i + length)) {
+                        continue SearchLoop;
+                    }
+                }
+                break;
+            }
+        }
+
+        return fraction.substring(0, fraction.length() >> 1);
+    }
 }
