@@ -15,26 +15,17 @@ public class Node {
         try (BufferedReader r = new BufferedReader(new InputStreamReader(Node.class.getResourceAsStream(resourceName)))) {
             String[] lines = r.lines().toArray(String[]::new);
 
-            int[] lastLine = parseLine(lines[lines.length - 1]);
+            int[] lastLine = NumberUtils.parseLine(lines[lines.length - 1]);
             Node[] nodesCache = Arrays.stream(lastLine).mapToObj(Node::new).toArray(Node[]::new);
 
             for (int i = lines.length - 2; i >= 0; i--) {
-                int[] line = parseLine(lines[i]);
+                int[] line = NumberUtils.parseLine(lines[i]);
                 for (int j = 0; j < line.length; j++) {
                     nodesCache[j] = new Node(line[j], nodesCache[j], nodesCache[j + 1]);
                 }
             }
             return nodesCache[0];
         }
-    }
-
-    private static int[] parseLine(String line) {
-        String[] parts = line.split(" ");
-        int[] numbers = new int[parts.length];
-        for (int i = 0; i < parts.length; i++) {
-            numbers[i] = Integer.parseInt(parts[i]);
-        }
-        return numbers;
     }
 
     private final int value;

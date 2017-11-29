@@ -41,4 +41,17 @@ public class NumberUtils {
             return ((till + 1) >> 1) * till * (2 * till + 1) / 3;
         }
     }
+
+    public static int[] parseLine(String line) {
+        return parseLine(line, " ");
+    }
+
+    public static int[] parseLine(String line, String splitBy) {
+        String[] parts = line.split(splitBy);
+        int[] numbers = new int[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            numbers[i] = Integer.parseInt(parts[i]);
+        }
+        return numbers;
+    }
 }
