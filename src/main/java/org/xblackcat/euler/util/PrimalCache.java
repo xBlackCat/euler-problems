@@ -4,7 +4,9 @@ import gnu.trove.iterator.TLongIterator;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongByteMap;
+import gnu.trove.map.TLongIntMap;
 import gnu.trove.map.hash.TLongByteHashMap;
+import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 
@@ -55,9 +57,62 @@ public class PrimalCache implements Iterable<Long> {
      */
     public TLongList factorize(long number) {
         TLongList result = new TLongArrayList();
-        doFactorize(result, number);
+        doFactorize(result, number, true);
         result.sort();
         return result;
+    }
+
+    /**
+     * Returns primal factors of the number in natural order. If the number is primal - return it
+     *
+     * @param number number to factorize
+     * @return factors of the number in natural order
+     */
+    public TLongSet allFactors(long number) {
+        TLongList primalFactors = new TLongArrayList();
+        doFactorize(primalFactors, number, true);
+        TLongIntMap factorsMap = new TLongIntHashMap();
+        primalFactors.forEach(f -> {
+            factorsMap.adjustOrPutValue(f, 1, 1);
+            return true;
+        });
+
+        TLongSet allFactors = collectAllFactors(factorsMap);
+        allFactors.remove(number);
+        return allFactors;
+    }
+
+    private TLongSet collectAllFactors(TLongIntMap factorsMap) {
+        long[] keys = factorsMap.keys();
+        if (keys.length == 1) {
+            long primalFactor = keys[0];
+            int amount = factorsMap.get(primalFactor);
+            long f = 1;
+            TLongHashSet result = new TLongHashSet();
+            result.add(1);
+            while (amount-- > 0) {
+                f *= primalFactor;
+                result.add(f);
+            }
+            return result;
+        } else {
+            TLongHashSet result = new TLongHashSet();
+            for (long primalFactor : keys) {
+                int amount = factorsMap.remove(primalFactor);
+                TLongSet factors = collectAllFactors(factorsMap);
+                factorsMap.put(primalFactor, amount);
+                result.addAll(factors);
+                long f = 1;
+                while (amount-- > 0) {
+                    f *= primalFactor;
+                    TLongIterator it = factors.iterator();
+                    while (it.hasNext()) {
+                        result.add(f * it.next());
+                    }
+                }
+            }
+            return result;
+        }
     }
 
     public TLongSet getPrimalsTill(long number) {
@@ -75,12 +130,14 @@ public class PrimalCache implements Iterable<Long> {
         return primals;
     }
 
-    private void doFactorize(TLongList result, long number) {
+    private void doFactorize(TLongList result, long number, boolean firstElement) {
         if (number <= 0) {
             return;
         }
         if (isPrimal(number)) {
-            result.add(number);
+            if (!firstElement) {
+                result.add(number);
+            }
             return;
         }
 
@@ -91,7 +148,7 @@ public class PrimalCache implements Iterable<Long> {
             }
             if (number % factor == 0) {
                 result.add(factor);
-                doFactorize(result, number / factor);
+                doFactorize(result, number / factor, false);
                 return;
             }
         }
@@ -101,7 +158,7 @@ public class PrimalCache implements Iterable<Long> {
             if (checkPrimal(largestPrimal)) {
                 if (number % largestPrimal == 0) {
                     result.add(largestPrimal);
-                    doFactorize(result, number / largestPrimal);
+                    doFactorize(result, number / largestPrimal, false);
                     return;
                 }
             }

@@ -1,6 +1,7 @@
 package org.xblackcat.euler.util;
 
 import gnu.trove.list.array.TLongArrayList;
+import gnu.trove.set.hash.TLongHashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -58,7 +59,18 @@ public class PrimalCacheTest {
 
         Assert.assertEquals(new TLongArrayList(new long[]{2, 5}), primal.factorize(10));
         Assert.assertEquals(new TLongArrayList(new long[]{2, 2, 5, 5}), primal.factorize(100));
-        Assert.assertEquals(new TLongArrayList(new long[]{53}), primal.factorize(53));
+        Assert.assertEquals(new TLongArrayList(new long[]{}), primal.factorize(53));
         Assert.assertEquals(new TLongArrayList(new long[]{2, 2, 3, 3, 5, 11, 19, 47}), primal.factorize(1768140));
+    }
+
+    @Test
+    public void allFactors() {
+        PrimalCache cache = new PrimalCache();
+        Assert.assertEquals(new TLongHashSet(new long[]{1, 2, 3, 4, 6}), cache.allFactors(12));
+        Assert.assertEquals(new TLongHashSet(new long[]{1, 2, 4, 8, 16, 32, 64}), cache.allFactors(128));
+        Assert.assertEquals(
+                new TLongHashSet(new long[]{1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 15, 18, 19, 20, 22, 30, 33, 36, 38, 44, 45, 47, 55, 57, 60, 66, 76, 90, 94, 95, 99, 110, 114, 132, 141, 165, 171, 180, 188, 190, 198, 209, 220, 228, 235, 282, 285, 330, 342, 380, 396, 418, 423, 470, 495, 517, 564, 570, 627, 660, 684, 705, 836, 846, 855, 893, 940, 990, 1034, 1045, 1140, 1254, 1410, 1551, 1692, 1710, 1786, 1881, 1980, 2068, 2090, 2115, 2508, 2585, 2679, 2820, 3102, 3135, 3420, 3572, 3762, 4180, 4230, 4465, 4653, 5170, 5358, 6204, 6270, 7524, 7755, 8037, 8460, 8930, 9306, 9405, 9823, 10340, 10716, 12540, 13395, 15510, 16074, 17860, 18612, 18810, 19646, 23265, 26790, 29469, 31020, 32148, 37620, 39292, 40185, 46530, 49115, 53580, 58938, 80370, 88407, 93060, 98230, 117876, 147345, 160740, 176814, 196460, 294690, 353628, 442035, 589380, 884070}),
+                cache.allFactors(1768140)
+        );
     }
 }
