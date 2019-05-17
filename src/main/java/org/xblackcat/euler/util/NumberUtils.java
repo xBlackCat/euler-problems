@@ -90,4 +90,15 @@ public class NumberUtils {
 
         return fraction.substring(0, fraction.length() >> 1);
     }
+
+    public static long[] generateBinomialCoefficients(int n) {
+        long[] result = new long[n + 1];
+
+        result[0] = result[n] = 1;
+        final int limit = n >> 1;
+        for (int i = 1; i <= limit; i++) {
+            result[n - i] = result[i] = result[i - 1] * (n - i + 1) / i;
+        }
+        return result;
+    }
 }
