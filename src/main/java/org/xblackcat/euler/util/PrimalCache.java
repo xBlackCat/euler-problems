@@ -1,12 +1,15 @@
 package org.xblackcat.euler.util;
 
+import gnu.trove.impl.unmodifiable.TUnmodifiableLongList;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongByteMap;
 import gnu.trove.map.TLongIntMap;
+import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongByteHashMap;
 import gnu.trove.map.hash.TLongIntHashMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 
@@ -25,6 +28,8 @@ public class PrimalCache implements Iterable<Long> {
             new long[]{1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19},
             new byte[]{0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1}
     );
+
+    private final TLongObjectMap<TLongList> primalFactorsCache = new TLongObjectHashMap<>();
 
     public boolean isPrimal(long num) {
 //        long start = System.currentTimeMillis();
@@ -56,10 +61,19 @@ public class PrimalCache implements Iterable<Long> {
      * @return factors of the number in natural order
      */
     public TLongList factorize(long number) {
+        if (primalFactorsCache.containsKey(number)) {
+            return primalFactorsCache.get(number);
+        }
+
         TLongList result = new TLongArrayList();
         doFactorize(result, number, true);
         result.sort();
-        return result;
+
+        TUnmodifiableLongList v = new TUnmodifiableLongList(result);
+        if (result.size() > 1) {
+            primalFactorsCache.put(number, v);
+        }
+        return v;
     }
 
     /**
@@ -138,6 +152,11 @@ public class PrimalCache implements Iterable<Long> {
             if (!firstElement) {
                 result.add(number);
             }
+            return;
+        }
+
+        if (primalFactorsCache.containsKey(number)) {
+            result.addAll(primalFactorsCache.get(number));
             return;
         }
 
