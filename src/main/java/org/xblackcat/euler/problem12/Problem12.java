@@ -25,14 +25,7 @@ public class Problem12 {
         long n = 1;
         long i = 1;
         while (true) {
-            TLongList factors = primals.factorize(n);
-            TLongIntMap factorsMap = new TLongIntHashMap();
-            factors.forEach(
-                    f -> {
-                        factorsMap.adjustOrPutValue(f, 1, 1);
-                        return true;
-                    }
-            );
+            TLongIntMap factorsMap = primals.factorizeMap(n);
 
             int allFactorsAmount = 1;
             for (int amount : factorsMap.values()) {

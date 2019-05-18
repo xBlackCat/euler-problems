@@ -1,6 +1,5 @@
 package org.xblackcat.euler.util;
 
-import gnu.trove.impl.unmodifiable.TUnmodifiableLongList;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
@@ -30,6 +29,8 @@ public class PrimalCache implements Iterable<Long> {
     );
 
     private final TLongObjectMap<TLongList> primalFactorsCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<TLongIntMap> primalFactorsMapCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<SparseFactorsMap> primalFactorsSparseMapCache = new TLongObjectHashMap<>();
 
     public boolean isPrimal(long num) {
 //        long start = System.currentTimeMillis();
@@ -69,11 +70,46 @@ public class PrimalCache implements Iterable<Long> {
         doFactorize(result, number, true);
         result.sort();
 
-        TUnmodifiableLongList v = new TUnmodifiableLongList(result);
         if (result.size() > 1) {
-            primalFactorsCache.put(number, v);
+            primalFactorsCache.put(number, result);
         }
-        return v;
+        return result;
+    }
+
+    /**
+     * Returns primal factors as map: key = factor, value = exponent
+     *
+     * @param number number to factorize
+     * @return factors of the number
+     */
+    public TLongIntMap factorizeMap(long number) {
+        if (primalFactorsMapCache.containsKey(number)) {
+            return primalFactorsMapCache.get(number);
+        }
+
+        TLongIntMap result = new TLongIntHashMap();
+        doFactorizeMap(result, number, true);
+
+        primalFactorsMapCache.put(number, result);
+        return result;
+    }
+
+    /**
+     * Returns primal factors as map: key = factor, value = exponent
+     *
+     * @param number number to factorize
+     * @return factors of the number
+     */
+    public SparseFactorsMap factorizeSparseMap(long number) {
+        if (primalFactorsSparseMapCache.containsKey(number)) {
+            return primalFactorsSparseMapCache.get(number);
+        }
+
+        SparseFactorsMap result = new SparseFactorsMap();
+        doFactorizeSparseMap(result, number, true);
+
+        primalFactorsSparseMapCache.put(number, result);
+        return result;
     }
 
     /**
@@ -155,8 +191,9 @@ public class PrimalCache implements Iterable<Long> {
             return;
         }
 
-        if (primalFactorsCache.containsKey(number)) {
-            result.addAll(primalFactorsCache.get(number));
+        final TLongList cachedFactors = primalFactorsCache.get(number);
+        if (cachedFactors != null) {
+            result.addAll(cachedFactors);
             return;
         }
 
@@ -178,6 +215,96 @@ public class PrimalCache implements Iterable<Long> {
                 if (number % largestPrimal == 0) {
                     result.add(largestPrimal);
                     doFactorize(result, number / largestPrimal, false);
+                    return;
+                }
+            }
+            largestPrimal += 2;
+        }
+    }
+
+    private void doFactorizeMap(TLongIntMap result, long number, boolean firstElement) {
+        if (number <= 0) {
+            return;
+        }
+        if (isPrimal(number)) {
+            if (!firstElement) {
+                result.adjustOrPutValue(number, 1, 1);
+            }
+            return;
+        }
+
+        final TLongIntMap cachedMap = primalFactorsMapCache.get(number);
+        if (cachedMap != null) {
+            cachedMap.forEachEntry((a, b) -> {
+                result.adjustOrPutValue(a, b, b);
+                return true;
+            });
+            return;
+        }
+
+        long limit = (long) Math.sqrt(number);
+        for (long factor : firstPrimals) {
+            if (factor > limit) {
+                return;
+            }
+            if (number % factor == 0) {
+                result.adjustOrPutValue(factor, 1, 1);
+                doFactorizeMap(result, number / factor, false);
+                return;
+            }
+        }
+
+        long largestPrimal = 23;
+        while (largestPrimal < limit) {
+            if (checkPrimal(largestPrimal)) {
+                if (number % largestPrimal == 0) {
+                    result.adjustOrPutValue(largestPrimal, 1, 1);
+                    doFactorizeMap(result, number / largestPrimal, false);
+                    return;
+                }
+            }
+            largestPrimal += 2;
+        }
+    }
+
+    private void doFactorizeSparseMap(SparseFactorsMap result, long number, boolean firstElement) {
+        if (number <= 0) {
+            return;
+        }
+        if (isPrimal(number)) {
+            if (!firstElement) {
+                result.adjustOrPutValue(number, 1, 1);
+            }
+            return;
+        }
+
+        final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
+        if (cachedMap != null) {
+            cachedMap.forEachEntry((a, b) -> {
+                result.adjustOrPutValue(a, b, b);
+                return true;
+            });
+            return;
+        }
+
+        long limit = (long) Math.sqrt(number);
+        for (long factor : firstPrimals) {
+            if (factor > limit) {
+                return;
+            }
+            if (number % factor == 0) {
+                result.adjustOrPutValue(factor, 1, 1);
+                doFactorizeSparseMap(result, number / factor, false);
+                return;
+            }
+        }
+
+        long largestPrimal = 23;
+        while (largestPrimal < limit) {
+            if (checkPrimal(largestPrimal)) {
+                if (number % largestPrimal == 0) {
+                    result.adjustOrPutValue(largestPrimal, 1, 1);
+                    doFactorizeSparseMap(result, number / largestPrimal, false);
                     return;
                 }
             }
