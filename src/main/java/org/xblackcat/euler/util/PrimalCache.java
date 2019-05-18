@@ -62,8 +62,9 @@ public class PrimalCache implements Iterable<Long> {
      * @return factors of the number in natural order
      */
     public TLongList factorize(long number) {
-        if (primalFactorsCache.containsKey(number)) {
-            return primalFactorsCache.get(number);
+        final TLongList cachedMap = primalFactorsCache.get(number);
+        if (cachedMap != null) {
+            return cachedMap;
         }
 
         TLongList result = new TLongArrayList();
@@ -83,8 +84,9 @@ public class PrimalCache implements Iterable<Long> {
      * @return factors of the number
      */
     public TLongIntMap factorizeMap(long number) {
-        if (primalFactorsMapCache.containsKey(number)) {
-            return primalFactorsMapCache.get(number);
+        final TLongIntMap cachedMap = primalFactorsMapCache.get(number);
+        if (cachedMap != null) {
+            return cachedMap;
         }
 
         TLongIntMap result = new TLongIntHashMap();
@@ -101,8 +103,9 @@ public class PrimalCache implements Iterable<Long> {
      * @return factors of the number
      */
     public SparseFactorsMap factorizeSparseMap(long number) {
-        if (primalFactorsSparseMapCache.containsKey(number)) {
-            return primalFactorsSparseMapCache.get(number);
+        final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
+        if (cachedMap != null) {
+            return cachedMap;
         }
 
         SparseFactorsMap result = new SparseFactorsMap();
@@ -210,7 +213,7 @@ public class PrimalCache implements Iterable<Long> {
         }
 
         long largestPrimal = 23;
-        while (largestPrimal < limit) {
+        while (largestPrimal <= limit) {
             if (checkPrimal(largestPrimal)) {
                 if (number % largestPrimal == 0) {
                     result.add(largestPrimal);
@@ -255,7 +258,7 @@ public class PrimalCache implements Iterable<Long> {
         }
 
         long largestPrimal = 23;
-        while (largestPrimal < limit) {
+        while (largestPrimal <= limit) {
             if (checkPrimal(largestPrimal)) {
                 if (number % largestPrimal == 0) {
                     result.adjustOrPutValue(largestPrimal, 1, 1);
@@ -280,10 +283,7 @@ public class PrimalCache implements Iterable<Long> {
 
         final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
         if (cachedMap != null) {
-            cachedMap.forEachEntry((a, b) -> {
-                result.adjustOrPutValue(a, b, b);
-                return true;
-            });
+            result.addMap(cachedMap);
             return;
         }
 
@@ -300,7 +300,7 @@ public class PrimalCache implements Iterable<Long> {
         }
 
         long largestPrimal = 23;
-        while (largestPrimal < limit) {
+        while (largestPrimal <= limit) {
             if (checkPrimal(largestPrimal)) {
                 if (number % largestPrimal == 0) {
                     result.adjustOrPutValue(largestPrimal, 1, 1);
