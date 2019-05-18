@@ -12,12 +12,16 @@ import java.util.Arrays;
 public class SparseFactorsMap {
     private int[] exp;
 
-    public SparseFactorsMap(int initialSize) {
-        exp = new int[initialSize];
-    }
-
     public SparseFactorsMap() {
         this(300);
+    }
+
+    public SparseFactorsMap(int initialSize) {
+        this(new int[initialSize]);
+    }
+
+    private SparseFactorsMap(int[] exp) {
+        this.exp = exp;
     }
 
     public int get(long factor) {
@@ -84,22 +88,40 @@ public class SparseFactorsMap {
         return map;
     }
 
+    @Override
+    protected SparseFactorsMap clone() {
+        return new SparseFactorsMap(exp.clone());
+    }
+
     public void addMap(SparseFactorsMap map) {
-        if (map.exp.length > exp.length) {
-            exp = Arrays.copyOf(exp, map.exp.length);
+        final int length = map.exp.length;
+        if (length > exp.length) {
+            exp = Arrays.copyOf(exp, length);
         }
 
-        for (int i = 0; i < exp.length; i++) {
+        for (int i = 0; i < length; i++) {
             exp[i] += map.exp[i];
         }
     }
 
-    public void addMapTwice(SparseFactorsMap map) {
-        if (map.exp.length > exp.length) {
-            exp = Arrays.copyOf(exp, map.exp.length);
+    public void subtractMap(SparseFactorsMap map) {
+        final int length = map.exp.length;
+        if (length > exp.length) {
+            exp = Arrays.copyOf(exp, length);
         }
 
-        for (int i = 0; i < exp.length; i++) {
+        for (int i = 0; i < length; i++) {
+            exp[i] -= map.exp[i];
+        }
+    }
+
+    public void addMapTwice(SparseFactorsMap map) {
+        final int length = map.exp.length;
+        if (length > exp.length) {
+            exp = Arrays.copyOf(exp, length);
+        }
+
+        for (int i = 0; i < length; i++) {
             exp[i] += map.exp[i] << 1;
         }
     }
@@ -129,5 +151,25 @@ public class SparseFactorsMap {
             return 0;
         }
         return (int) ((number >> 1) & 0x7FFF_FFFF);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder buf = new StringBuilder("{");
+        forEachEntry(new TLongIntProcedure() {
+            private boolean first = true;
+
+            public boolean execute(long key, int value) {
+                if (first) first = false;
+                else buf.append(", ");
+
+                buf.append(key);
+                buf.append("=");
+                buf.append(value);
+                return true;
+            }
+        });
+        buf.append("}");
+        return buf.toString();
     }
 }

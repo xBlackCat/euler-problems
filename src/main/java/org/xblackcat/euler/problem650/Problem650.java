@@ -1,7 +1,5 @@
 package org.xblackcat.euler.problem650;
 
-import gnu.trove.map.TLongIntMap;
-import gnu.trove.map.hash.TLongIntHashMap;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
@@ -31,9 +29,9 @@ public class Problem650 {
         long start = System.currentTimeMillis();
         long lastCheckPoint = start;
         for (int i = 2; i <= n; i++) {
-            final SparseFactorsMap productFactors = factorizeProduct(i, primals);
+            final SparseFactorsMap productFactors = MathUtils.factorizeProduct(i, primals);
 
-            final LongModConsumer procedure = new LongModConsumer(this::getModVal, 1);
+            final LongModConsumer procedure = new LongModConsumer();
             productFactors.forEachEntry(procedure);
             final long factorsMod = procedure.getProduct();
 
@@ -55,9 +53,9 @@ public class Problem650 {
         BigInteger sum = BigInteger.ONE;
 
         for (int i = 2; i <= n; i++) {
-            final SparseFactorsMap productFactors = factorizeProduct(i, primals);
+            final SparseFactorsMap productFactors = MathUtils.factorizeProduct(i, primals);
 
-            final BigIntegerConsumer procedure = new BigIntegerConsumer(this::getBigVal, BigInteger.ONE);
+            final BigIntegerConsumer procedure = new BigIntegerConsumer();
             productFactors.forEachEntry(procedure);
             final BigInteger factorsSum = procedure.getProduct();
 
@@ -65,99 +63,4 @@ public class Problem650 {
         }
         return sum;
     }
-
-    SparseFactorsMap factorizeProduct(int n, PrimalCache primals) {
-        final SparseFactorsMap productFactors = new SparseFactorsMap();
-        final SparseFactorsMap currentFactors = new SparseFactorsMap();
-
-        int limit = (n + 1) >> 1;
-        int k = 1;
-        while (k < limit) {
-            final int numerator = n - k + 1;
-            updateFactors(primals, currentFactors, k, numerator);
-
-            productFactors.addMapTwice(currentFactors);
-            k++;
-        }
-
-        if ((n & 1) == 0) {
-            final int numerator = (n >> 1) + 1;
-            updateFactors(primals, currentFactors, k, numerator);
-
-            productFactors.addMap(currentFactors);
-        }
-
-
-//        System.out.println(n + " -> " + productFactors);
-
-        return productFactors;
-    }
-
-    private void updateFactors(PrimalCache primals, SparseFactorsMap currentFactors, int k, int numerator) {
-        final TLongIntMap factorsChange = new TLongIntHashMap(primals.factorizeMap(numerator));
-        if (primals.isPrimal(numerator)) {
-            factorsChange.adjustOrPutValue(numerator, 1, 1);
-        }
-        final TLongIntMap factorsRemove = primals.factorizeMap(k);
-        factorsRemove.forEachEntry((a, b) -> {
-            factorsChange.adjustOrPutValue(a, -b, -b);
-            return true;
-        });
-        if (primals.isPrimal(k)) {
-            factorsChange.adjustOrPutValue(k, -1, -1);
-        }
-
-        factorsChange.forEachEntry((l, i) -> {
-            if (i != 0) {
-                currentFactors.adjustOrPutValue(l, i, i);
-            }
-            return true;
-        });
-    }
-
-    private BigInteger collectAllFactorsSumBig(TLongIntMap factorsMap) {
-        BigInteger sum = BigInteger.ONE;
-
-        for (long key : factorsMap.keys()) {
-            int value = factorsMap.get(key);
-
-            sum = sum.multiply(getBigVal(key, value));
-        }
-
-        return sum;
-    }
-
-    private BigInteger getBigVal(long key, int value) {
-        return BigInteger.valueOf(key).pow(value + 1).subtract(BigInteger.ONE).divide(BigInteger.valueOf(key - 1));
-    }
-
-    private long collectAllFactorsSumMod(TLongIntMap factorsMap) {
-        long sum = 1;
-
-        for (long key : factorsMap.keys()) {
-            int value = factorsMap.get(key);
-
-            sum *= getModVal(key, value);
-            if (sum >= BASE) {
-                sum %= BASE;
-            }
-        }
-
-        return sum;
-    }
-
-    private long getModVal(long key, int value) {
-        long l = MathUtils.modPow(key, value + 1, BASE);
-        if (l == 0) {
-            l = BASE - 1;
-        } else {
-            l--;
-        }
-        long val = l * MathUtils.modPow(key - 1, BASE - 2, BASE);
-        if (val >= BASE) {
-            val %= BASE;
-        }
-        return val;
-    }
-
 }
