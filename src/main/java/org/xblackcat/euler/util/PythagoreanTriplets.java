@@ -1,7 +1,6 @@
 package org.xblackcat.euler.util;
 
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 
 import java.util.*;
@@ -15,7 +14,7 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
     private final SquareCache squareCache = new SquareCache();
     private final PrimalCache primalCache = new PrimalCache();
 
-    private final TLongObjectMap<Set<Triplet>> tripletsByCathetusCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<Set<Triplet>> tripletsByCathetusCache = TUtils.nullLongObjectMap();
 
     @Override
     public Iterator<Triplet> iterator() {
@@ -75,10 +74,9 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         }
 
         Set<Triplet> triplets = new HashSet<>();
-        int lowerBoundM = (int) Math.floor(Math.sqrt(targetB >> 1));
         int upperBoundM = (int) Math.ceil(Math.sqrt(maxC - 1));
 
-        for (int m = lowerBoundM; m <= upperBoundM; m++) {
+        for (int m = 1; m <= upperBoundM; m++) {
             long squareM = squareCache.squareOf(m);
             for (int n = 1; n < m; n++) {
                 long squareN = squareCache.squareOf(n);
