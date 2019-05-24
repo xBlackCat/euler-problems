@@ -122,13 +122,8 @@ public class PrimalCache implements Iterable<Long> {
      * @return factors of the number in natural order
      */
     public TLongSet allFactors(long number) {
-        TLongList primalFactors = new TLongArrayList();
-        doFactorize(primalFactors, number, true);
         TLongIntMap factorsMap = new TLongIntHashMap();
-        primalFactors.forEach(f -> {
-            factorsMap.adjustOrPutValue(f, 1, 1);
-            return true;
-        });
+        doFactorizeMap(factorsMap, number, true);
 
         TLongSet allFactors = collectAllFactors(factorsMap);
         allFactors.remove(number);
@@ -136,20 +131,18 @@ public class PrimalCache implements Iterable<Long> {
     }
 
     public TLongSet collectAllFactors(TLongIntMap factorsMap) {
+        TLongHashSet result = new TLongHashSet();
+        result.add(1);
         long[] keys = factorsMap.keys();
         if (keys.length == 1) {
             long primalFactor = keys[0];
             int amount = factorsMap.get(primalFactor);
             long f = 1;
-            TLongHashSet result = new TLongHashSet();
-            result.add(1);
             while (amount-- > 0) {
                 f *= primalFactor;
                 result.add(f);
             }
-            return result;
         } else {
-            TLongHashSet result = new TLongHashSet();
             for (long primalFactor : keys) {
                 int amount = factorsMap.remove(primalFactor);
                 TLongSet factors = collectAllFactors(factorsMap);
@@ -164,8 +157,8 @@ public class PrimalCache implements Iterable<Long> {
                     }
                 }
             }
-            return result;
         }
+        return result;
     }
 
     public TLongSet getPrimalsTill(long number) {
