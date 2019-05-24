@@ -3,8 +3,7 @@ package org.xblackcat.euler.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * 21.11.2017 9:20
@@ -23,10 +22,13 @@ public class PythagoreanTripletsTest {
 
     @Test
     public void searchBCathetus() {
-        final Collection<Triplet> triplets = new PythagoreanTriplets().searchBCathetus(105, 200);
+        final PythagoreanTriplets triplets = new PythagoreanTriplets();
+        final int max = 1000000;
+        Collection<Triplet> found = triplets.generateTripletsTill(max);
+//        found.stream().sorted(Comparator.comparingLong(Triplet::getC).thenComparingLong(Triplet::getB).thenComparingLong(Triplet::getA)).forEach(
+//                System.out::println);
 
-        System.out.println(triplets);
+        Assert.assertEquals(2097, found.size());
 
-        Assert.assertTrue(triplets.contains(new Triplet(105, 140, 175)));
     }
 }

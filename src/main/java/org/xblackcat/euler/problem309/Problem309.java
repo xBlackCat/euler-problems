@@ -3,12 +3,9 @@ package org.xblackcat.euler.problem309;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
-import org.xblackcat.euler.util.PrimalCache;
-import org.xblackcat.euler.util.PythagoreanTriplets;
-import org.xblackcat.euler.util.Triplet;
+import org.xblackcat.euler.util.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * https://projecteuler.net/problem=309
@@ -22,16 +19,28 @@ import java.util.Collection;
 public class Problem309 {
     private final PythagoreanTriplets tripletHelper = new PythagoreanTriplets();
     private final PrimalCache primalCache = tripletHelper.getPrimalCache();
+    private final SquareCache squareCache = tripletHelper.getSquareCache();
 
     @EntryPoint
     public int ladders(int n) {
-//        Set<Triplet> found = new HashSet<>();
         int foundTriplets = 0;
 
         long start = System.currentTimeMillis();
-        long lastCheckPoint = start;
 
-        for (int w = 4; w < n; w++) {
+        final Collection<Triplet> collection = tripletHelper.generateTripletsTill(n - 1);
+
+        long lastCheckPoint = System.currentTimeMillis();
+        System.out.println(collection.size() + " pythagorean triples are generated in " + (lastCheckPoint - start) + " ms");
+
+        Map<Long, Set<Triplet>> tripletsByCathetus = new HashMap<>();
+
+        for (Triplet t : collection) {
+            tripletsByCathetus.computeIfAbsent(t.getA(), k -> new HashSet<>()).add(t);
+            tripletsByCathetus.computeIfAbsent(t.getB(), k -> new HashSet<>()).add(t);
+        }
+
+
+        for (long w = 4; w < n; w++) {
             if ((w & 0x7FF) == 0) {
                 final long now = System.currentTimeMillis();
                 System.out.println(w + " width reached after " + (now - start) + " ms (+" + (now - lastCheckPoint) + " ms) since start. " +
@@ -39,43 +48,77 @@ public class Problem309 {
                 lastCheckPoint = now;
             }
 
-            final Collection<Triplet> triplets = this.tripletHelper.searchBCathetus(w, n);
+            final Collection<Triplet> triplets = tripletsByCathetus.getOrDefault(w, Collections.emptySet());
 
-            //            System.out.println("Triplets: " + triplets);
-
-            if (triplets.size() < 2) {
-                continue;
-            }
-
-            Collection<Triplet> leftTriangles = new ArrayList<>();
-            Collection<Triplet> rightTriangles = new ArrayList<>();
-
-            for (Triplet t : triplets) {
-                if (t.getC() >= n) {
-                    continue;
-                }
-                if (t.getA() == w) {
-                    leftTriangles.add(t);
-                } else {
-                    rightTriangles.add(t);
-                }
-            }
-
-            for (Triplet rightTriangle : rightTriangles) {
-                long b = rightTriangle.getA();
-                for (Triplet leftTriangle : leftTriangles) {
-                    long a = leftTriangle.getB();
-
-                    if ((a * b) % (a + b) == 0) {
-                        
-
-                        foundTriplets++;
-                    }
-                }
-
-            }
+            foundTriplets += checkTriplets(w, triplets);
         }
 
+
         return foundTriplets;
+    }
+
+    private int checkTriplets(long w, Collection<Triplet> triplets) {
+        if (triplets.size() < 2) {
+            return 0;
+        }
+
+        int foundTriplets = 0;
+
+        final Triplet[] toCheck = triplets.stream().sorted(Comparator.comparingLong(Triplet::getC).reversed()).toArray(Triplet[]::new);
+
+        for (int i = 0; i < toCheck.length; i++) {
+            final Triplet leftTriangle = toCheck[i];
+            long b;
+            if (leftTriangle.getA() == w) {
+                b = leftTriangle.getB();
+            } else {
+                b = leftTriangle.getA();
+            }
+            for (int j = i + 1; j < toCheck.length; j++) {
+                final Triplet rightTriangle = toCheck[j];
+                long a;
+                if (rightTriangle.getA() == w) {
+                    a = rightTriangle.getB();
+                } else {
+                    a = rightTriangle.getA();
+                }
+                if ((a * b) % (a + b) == 0) {
+                    foundTriplets++;
+                }
+            }
+
+        }
+        return foundTriplets;
+    }
+
+    public int bruteForce(long limit) {
+        int limitW = (int) Math.ceil(limit / Math.sqrt(2));
+
+        int found = 0;
+        for (int w = 50; w < limitW; w++) {
+            final long sW = squareCache.squareOf(w);
+            for (int y = (int) (limit - 1); y > w; y--) {
+                final long sY = squareCache.squareOf(y);
+                for (int x = w + 1; x < y; x++) {
+                    final long sX = squareCache.squareOf(x);
+
+                    long sB = sY - sW;
+                    long sA = sX - sW;
+
+                    final SparseFactorsMap fA = primalCache.factorizeSparseMap(sA);
+                    final SparseFactorsMap fB = primalCache.factorizeSparseMap(sB);
+
+                    long a = fA.sqrtInt();
+                    long b = fB.sqrtInt();
+                    if (a != -1 && b != -1) {
+                        if ((a * b) % (a + b) == 0) {
+                            System.out.println(w + ": <a = " + ((a * b) / (a + b)) + ", b = " + x + ", c = " + y + ">");
+                            found++;
+                        }
+                    }
+                }
+            }
+        }
+        return found;
     }
 }

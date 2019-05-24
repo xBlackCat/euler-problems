@@ -301,4 +301,59 @@ public class SparseFactorsMap {
             }
         }
     }
+
+    public long value() {
+        long v = 1;
+        if (exp[0] != 0) {
+            v <<= exp[0];
+        }
+        for (int i = 1; i < exp.length; i++) {
+            if (exp[i] > 0) {
+                int e = exp[i];
+                int f = (i << 1) + 1;
+                while (e-- > 0) {
+                    v *= f;
+                }
+            }
+        }
+        return v;
+    }
+
+    /**
+     * Returns integer square root of the value or -1 if it is not possible to get integer square root
+     *
+     * @return integer square root or -1
+     */
+    public long sqrtInt() {
+        long v = 1;
+        if (exp[0] != 0) {
+            if ((exp[0] & 1) != 0) {
+                return -1;
+            }
+            v <<= (exp[0] >> 1);
+        }
+        for (int i = 1; i < exp.length; i++) {
+            if (exp[i] > 0) {
+                int e = exp[i];
+                if ((e & 1) != 0) {
+                    return -1;
+                }
+                e >>= 1;
+                int f = (i << 1) + 1;
+                while (e-- > 0) {
+                    v *= f;
+                }
+            }
+        }
+        return v;
+    }
+
+    public double sqrtScalar() {
+        final long l = sqrtInt();
+        if (l != -1) {
+            return l;
+        } else {
+            return Math.sqrt(value());
+        }
+    }
 }

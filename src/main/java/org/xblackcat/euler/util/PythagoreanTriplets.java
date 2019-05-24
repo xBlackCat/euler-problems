@@ -1,6 +1,7 @@
 package org.xblackcat.euler.util;
 
 import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 
 import java.util.*;
@@ -14,11 +15,39 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
     private final SquareCache squareCache = new SquareCache();
     private final PrimalCache primalCache = new PrimalCache();
 
-    private final TLongObjectMap<Set<Triplet>> tripletsByCathetusCache = TUtils.nullLongObjectMap();
+    private final TLongObjectMap<Set<Triplet>> tripletsByCathetusCache = new TLongObjectHashMap<>();
 
     @Override
     public Iterator<Triplet> iterator() {
         return new TripletIterator();
+    }
+
+    public Collection<Triplet> generateTripletsTill(long limitC) {
+        Collection<Triplet> result = new HashSet<>();
+
+        for (int m = 2; m < limitC; m++) {
+            final long sM = squareCache.squareOf(m);
+            if (sM > limitC) {
+                break;
+            }
+            for (int n = 1; n < m; n++) {
+                final long sN = squareCache.squareOf(n);
+                if (sM + sN > limitC) {
+                    break;
+                }
+
+                for (int k = 1; k < limitC; k++) {
+                    long c = (sM + sN) * k;
+                    if (c > limitC) {
+                        break;
+                    }
+
+                    result.add(new Triplet((sM - sN) * k, (k * m * n) << 1, c));
+                }
+            }
+        }
+
+        return result;
     }
 
     private class TripletIterator implements Iterator<Triplet> {
@@ -53,7 +82,7 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         }
     }
 
-    public Collection<Triplet> searchBCathetus(int targetB, int maxC) {
+    public Collection<Triplet> searchByCathetus(int targetB, int maxC) {
         Set<Triplet> results = new HashSet<>();
 
         final TLongSet factorsList = primalCache.allFactors(targetB);
@@ -66,10 +95,17 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         return results;
     }
 
-    private void collectByCathetus(long targetB, long factor, long maxC, Collection<Triplet> results) {
-        final Set<Triplet> cachedTriples = tripletsByCathetusCache.get(targetB);
+    private void collectByCathetus(long target, long factor, long maxC, Collection<Triplet> results) {
+        if (target < 3) {
+            return;
+        }
+        final Set<Triplet> cachedTriples = tripletsByCathetusCache.get(target);
         if (cachedTriples != null) {
-            cachedTriples.forEach(triplet -> results.add(triplet.multiply(factor)));
+            for (Triplet triplet : cachedTriples) {
+                if (triplet.getC() <= maxC) {
+                    results.add(triplet.multiply(factor));
+                }
+            }
             return;
         }
 
@@ -82,25 +118,24 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
                 long squareN = squareCache.squareOf(n);
                 final long c = squareM + squareN;
 
-                if (c > maxC || c < targetB) {
+                if (c > maxC || c < target) {
                     continue;
                 }
 
                 final Triplet t;
-                if (((m * n) << 1) == targetB) {
-                    t = new Triplet(squareM - squareN, targetB, c);
-                } else if (squareM - squareN == targetB) {
-                    t = new Triplet(targetB, 2 * m * n, c);
+                if (((m * n) << 1) == target) {
+                    t = new Triplet(squareM - squareN, target, c);
+                } else if (squareM - squareN == target) {
+                    t = new Triplet(target, 2 * m * n, c);
                 } else {
-                    t = null;
+                    continue;
                 }
-                if (t != null) {
-                    results.add(t.multiply(factor));
-                    triplets.add(t);
-                }
+
+                results.add(t.multiply(factor));
+                triplets.add(t);
             }
         }
-        tripletsByCathetusCache.put(targetB, triplets);
+        tripletsByCathetusCache.put(target, triplets);
     }
 
     public List<Triplet> searchByHypo(int hypo) {
