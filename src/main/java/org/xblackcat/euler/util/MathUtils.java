@@ -86,4 +86,26 @@ public class MathUtils {
             currentFactors.adjustOrPutValue(k, -1, -1);
         }
     }
+
+    public static int gcd(int a, int b) {
+        while (a != b) {
+            if (a > b) {
+                a -= b;
+            } else {
+                b -= a;
+            }
+        }
+        return a;
+    }
+
+    public static long gcd(long a, long b) {
+        while (a != b) {
+            if (a > b) {
+                a -= b;
+            } else {
+                b -= a;
+            }
+        }
+        return a;
+    }
 }

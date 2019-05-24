@@ -105,14 +105,14 @@ public class PrimalCache implements Iterable<Long> {
     public SparseFactorsMap factorizeSparseMap(long number) {
         final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
         if (cachedMap != null) {
-            return cachedMap;
+            return cachedMap.clone();
         }
 
         SparseFactorsMap result = new SparseFactorsMap();
         doFactorizeSparseMap(result, number, true);
 
         primalFactorsSparseMapCache.put(number, result);
-        return result;
+        return result.clone();
     }
 
     /**
@@ -135,7 +135,7 @@ public class PrimalCache implements Iterable<Long> {
         return allFactors;
     }
 
-    private TLongSet collectAllFactors(TLongIntMap factorsMap) {
+    public TLongSet collectAllFactors(TLongIntMap factorsMap) {
         long[] keys = factorsMap.keys();
         if (keys.length == 1) {
             long primalFactor = keys[0];

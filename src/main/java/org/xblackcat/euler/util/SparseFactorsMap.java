@@ -11,17 +11,60 @@ import java.util.Arrays;
  */
 public class SparseFactorsMap {
     private int[] exp;
+    private Boolean isEmpty;
 
     public SparseFactorsMap() {
-        this(300);
+        this(10);
     }
 
     public SparseFactorsMap(int initialSize) {
         this(new int[initialSize]);
+        isEmpty = true;
     }
 
     private SparseFactorsMap(int[] exp) {
         this.exp = exp;
+        if (exp.length == 0) {
+            isEmpty = true;
+        }
+    }
+
+    public static SparseFactorsMap gcd(SparseFactorsMap... maps) {
+        if (maps == null || maps.length == 0) {
+            return new SparseFactorsMap();
+        } else if (maps.length == 1) {
+            return maps[0];
+        }
+
+        int minSize = Integer.MAX_VALUE;
+        for (SparseFactorsMap m : maps) {
+            if (minSize > m.exp.length) {
+                minSize = m.exp.length;
+            }
+        }
+
+        int[] result = new int[minSize];
+        int maxRealIndex = -1;
+
+        for (int i = 0; i < result.length; i++) {
+            int minExp = Integer.MAX_VALUE;
+            for (SparseFactorsMap m : maps) {
+                final int exp = m.exp[i];
+                if (minExp > exp) {
+                    minExp = exp;
+                }
+            }
+            if (minExp != 0) {
+                maxRealIndex = i;
+                result[i] = minExp;
+            }
+        }
+
+        if (maxRealIndex == -1) {
+            return new SparseFactorsMap(new int[0]);
+        }
+
+        return new SparseFactorsMap(Arrays.copyOf(result, maxRealIndex + 1));
     }
 
     public int get(long factor) {
@@ -45,6 +88,7 @@ public class SparseFactorsMap {
         } else {
             exp[idx] = pow;
         }
+        probeState(idx);
         return oldVal;
     }
 
@@ -56,6 +100,7 @@ public class SparseFactorsMap {
 
         final int oldVal = exp[idx];
         exp[idx] = pow;
+        probeState(idx);
         return oldVal;
     }
 
@@ -67,11 +112,13 @@ public class SparseFactorsMap {
 
         final int oldVal = exp[idx];
         exp[idx] = 0;
+        probeState(idx);
         return oldVal;
     }
 
     public void clear() {
         Arrays.fill(exp, 0);
+        isEmpty = true;
     }
 
     public TLongIntMap toTMap() {
@@ -88,8 +135,43 @@ public class SparseFactorsMap {
         return map;
     }
 
+    /**
+     * @param idx true - value was set. False - value was cleared
+     */
+    private void probeState(int idx) {
+        final int value = exp[idx];
+        if (isEmpty == Boolean.FALSE) {
+            if (value == 0) {
+                isEmpty = null;
+            }
+        } else if (value != 0) {
+            isEmpty = false;
+        }
+    }
+
+    public boolean isEmpty() {
+        if (isEmpty == null) {
+            if (exp.length == 0) {
+                isEmpty = true;
+                return true;
+            }
+
+            for (int i : exp) {
+                if (i != 0) {
+                    isEmpty = false;
+                    return false;
+                }
+            }
+
+            isEmpty = true;
+            return true;
+        } else {
+            return isEmpty;
+        }
+    }
+
     @Override
-    protected SparseFactorsMap clone() {
+    public SparseFactorsMap clone() {
         return new SparseFactorsMap(exp.clone());
     }
 
@@ -171,5 +253,52 @@ public class SparseFactorsMap {
         });
         buf.append("}");
         return buf.toString();
+    }
+
+    public void removeAll(SparseFactorsMap gcd) {
+        int limit = Math.min(gcd.exp.length, exp.length);
+        isEmpty = true;
+        for (int i = 0; i < limit; i++) {
+            final int thatExp = gcd.exp[i];
+            if (thatExp != 0) {
+                if (thatExp > exp[i]) {
+                    exp[i] = 0;
+                } else {
+                    exp[i] -= thatExp;
+                }
+            } else if (isEmpty && exp[i] != 0) {
+                isEmpty = false;
+            }
+        }
+
+        if (isEmpty) {
+            for (int i = limit; i < exp.length; i++) {
+                if (exp[i] != 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void merge(SparseFactorsMap gcd) {
+        int limit = Math.min(gcd.exp.length, exp.length);
+        isEmpty = true;
+        for (int i = 0; i < limit; i++) {
+            final int thatExp = gcd.exp[i];
+            int value = Math.max(exp[i], thatExp);
+            if (isEmpty && value != 0) {
+                isEmpty = false;
+            }
+        }
+
+        if (isEmpty) {
+            for (int i = limit; i < exp.length; i++) {
+                if (exp[i] != 0) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
     }
 }
