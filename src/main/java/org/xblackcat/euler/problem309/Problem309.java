@@ -41,13 +41,6 @@ public class Problem309 {
 
 
         for (long w = 4; w < n; w++) {
-            if ((w & 0x7FF) == 0) {
-                final long now = System.currentTimeMillis();
-                System.out.println(w + " width reached after " + (now - start) + " ms (+" + (now - lastCheckPoint) + " ms) since start. " +
-                                           "Found triplets so far: " + foundTriplets/* + " / " + found.size()*/);
-                lastCheckPoint = now;
-            }
-
             final Collection<Triplet> triplets = tripletsByCathetus.getOrDefault(w, Collections.emptySet());
 
             foundTriplets += checkTriplets(w, triplets);
