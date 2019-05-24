@@ -75,7 +75,7 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         }
 
         Set<Triplet> triplets = new HashSet<>();
-        int lowerBoundM = (int) Math.floor(Math.sqrt(targetB));
+        int lowerBoundM = (int) Math.floor(Math.sqrt(targetB >> 1));
         int upperBoundM = (int) Math.ceil(Math.sqrt(maxC - 1));
 
         for (int m = lowerBoundM; m <= upperBoundM; m++) {
@@ -108,9 +108,8 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
     public List<Triplet> searchByHypo(int hypo) {
         Set<Triplet> results = new HashSet<>();
 
-        collectByHypo(hypo, 1, results);
-
-        primalCache.factorize(hypo).forEach(factor -> {
+        final TLongSet factorList = primalCache.allFactors(hypo);
+        factorList.forEach(factor -> {
             collectByHypo(hypo / factor, factor, results);
 
             return true;
