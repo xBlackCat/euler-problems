@@ -1,5 +1,7 @@
 package org.xblackcat.euler.util;
 
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongIntMap;
 import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.procedure.TLongIntProcedure;
@@ -76,6 +78,22 @@ public class SparseFactorsMap {
         return exp[idx];
     }
 
+    public long[] keys() {
+        TLongList keys = new TLongArrayList();
+
+        if (exp[0] != 0) {
+            keys.add(2);
+        }
+
+        for (int i = 1; i < exp.length; i++) {
+            if (exp[i] != 0) {
+                keys.add((i << 1) + 1);
+            }
+        }
+
+        return keys.toArray();
+    }
+
     public int adjustOrPutValue(long factor, int pow, int powAdjust) {
         int idx = toIdx(factor);
         if (idx >= exp.length) {
@@ -89,7 +107,7 @@ public class SparseFactorsMap {
             exp[idx] = pow;
         }
         probeState(idx);
-        return oldVal;
+        return exp[idx];
     }
 
     public int put(long factor, int pow) {
@@ -314,6 +332,21 @@ public class SparseFactorsMap {
                 while (e-- > 0) {
                     v *= f;
                 }
+            }
+        }
+        return v;
+    }
+
+    public long value(long mod) {
+        long v = 1;
+        if (exp[0] != 0) {
+            v = MathUtils.modPow(2, exp[0], mod);
+        }
+        for (int i = 1; i < exp.length; i++) {
+            if (exp[i] > 0) {
+                int e = exp[i];
+                int f = (i << 1) + 1;
+                v = (v * MathUtils.modPow(f, e, mod)) % mod;
             }
         }
         return v;

@@ -20,6 +20,7 @@ public class Problem309 {
     private final PythagoreanTriplets tripletHelper = new PythagoreanTriplets();
     private final PrimalCache primalCache = tripletHelper.getPrimalCache();
     private final SquareCache squareCache = tripletHelper.getSquareCache();
+    private final SparseMapFactorizer factorizer = new SparseMapFactorizer(primalCache);
 
     @EntryPoint
     public int ladders(int n) {
@@ -98,8 +99,8 @@ public class Problem309 {
                     long sB = sY - sW;
                     long sA = sX - sW;
 
-                    final SparseFactorsMap fA = primalCache.factorizeSparseMap(sA);
-                    final SparseFactorsMap fB = primalCache.factorizeSparseMap(sB);
+                    final SparseFactorsMap fA = factorizer.factorize(sA);
+                    final SparseFactorsMap fB = factorizer.factorize(sB);
 
                     long a = fA.sqrtInt();
                     long b = fB.sqrtInt();

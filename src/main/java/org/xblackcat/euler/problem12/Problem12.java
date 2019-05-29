@@ -1,12 +1,11 @@
 package org.xblackcat.euler.problem12;
 
-import gnu.trove.list.TLongList;
 import gnu.trove.map.TLongIntMap;
-import gnu.trove.map.hash.TLongIntHashMap;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
-import org.xblackcat.euler.util.PrimalCache;
+import org.xblackcat.euler.util.MathUtils;
+import org.xblackcat.euler.util.TFactorizer;
 
 /**
  * https://projecteuler.net/problem=10
@@ -21,16 +20,13 @@ public class Problem12 {
     @EntryPoint
     public long triangleNumberWithDivisors(int over) {
         long largestAmount = 1;
-        PrimalCache primals = new PrimalCache();
+        TFactorizer primals = new TFactorizer();
         long n = 1;
         long i = 1;
         while (true) {
-            TLongIntMap factorsMap = primals.factorizeMap(n);
+            TLongIntMap factorsMap = primals.factorize(n);
 
-            int allFactorsAmount = 1;
-            for (int amount : factorsMap.values()) {
-                allFactorsAmount *= amount + 1;
-            }
+            long allFactorsAmount = MathUtils.allFactorsCount(factorsMap);
             if (largestAmount < allFactorsAmount) {
                 largestAmount = allFactorsAmount;
                 if (largestAmount >= over) {

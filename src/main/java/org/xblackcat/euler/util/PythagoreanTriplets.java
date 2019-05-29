@@ -14,6 +14,7 @@ import java.util.*;
 public class PythagoreanTriplets implements Iterable<Triplet> {
     private final SquareCache squareCache = new SquareCache();
     private final PrimalCache primalCache = new PrimalCache();
+    private final TFactorizer factorizer = new TFactorizer(primalCache);
 
     private final TLongObjectMap<Set<Triplet>> tripletsByCathetusCache = new TLongObjectHashMap<>();
 
@@ -82,10 +83,10 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         }
     }
 
-    public Collection<Triplet> searchByCathetus(int targetB, int maxC) {
+    public Collection<Triplet> searchByCathetus(long targetB, int maxC) {
         Set<Triplet> results = new HashSet<>();
 
-        final TLongSet factorsList = primalCache.allFactors(targetB);
+        final TLongSet factorsList = MathUtils.allFactors(factorizer.factorize(targetB));
         factorsList.forEach(factor -> {
             collectByCathetus(targetB / factor, factor, maxC / factor, results);
 
@@ -138,10 +139,10 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
         tripletsByCathetusCache.put(target, triplets);
     }
 
-    public List<Triplet> searchByHypo(int hypo) {
+    public List<Triplet> searchByHypo(long hypo) {
         Set<Triplet> results = new HashSet<>();
 
-        final TLongSet factorList = primalCache.allFactors(hypo);
+        final TLongSet factorList = MathUtils.allFactors(factorizer.factorize(hypo));
         factorList.forEach(factor -> {
             collectByHypo(hypo / factor, factor, results);
 
@@ -174,5 +175,9 @@ public class PythagoreanTriplets implements Iterable<Triplet> {
 
     public PrimalCache getPrimalCache() {
         return primalCache;
+    }
+
+    public TFactorizer getFactorizer() {
+        return factorizer;
     }
 }

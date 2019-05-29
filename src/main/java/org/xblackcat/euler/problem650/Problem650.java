@@ -4,8 +4,8 @@ import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
 import org.xblackcat.euler.util.MathUtils;
-import org.xblackcat.euler.util.PrimalCache;
 import org.xblackcat.euler.util.SparseFactorsMap;
+import org.xblackcat.euler.util.SparseMapFactorizer;
 
 import java.math.BigInteger;
 
@@ -23,7 +23,7 @@ public class Problem650 {
 
     @EntryPoint
     public long divisors(int n) {
-        final PrimalCache primals = new PrimalCache();
+        final SparseMapFactorizer primals = new SparseMapFactorizer();
         long sum = 1;
 
         long start = System.currentTimeMillis();
@@ -49,7 +49,7 @@ public class Problem650 {
     }
 
     public BigInteger divisorsLarge(int n) {
-        final PrimalCache primals = new PrimalCache();
+        final SparseMapFactorizer primals = new SparseMapFactorizer();
         BigInteger sum = BigInteger.ONE;
 
         for (int i = 2; i <= n; i++) {

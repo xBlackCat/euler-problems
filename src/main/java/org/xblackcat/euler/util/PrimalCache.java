@@ -1,14 +1,8 @@
 package org.xblackcat.euler.util;
 
 import gnu.trove.iterator.TLongIterator;
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongByteMap;
-import gnu.trove.map.TLongIntMap;
-import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongByteHashMap;
-import gnu.trove.map.hash.TLongIntHashMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 
@@ -21,32 +15,13 @@ import java.util.stream.LongStream;
  * @author xBlackCat
  */
 public class PrimalCache implements Iterable<Long> {
-    private final long[] firstPrimals = new long[]{2, 3, 5, 7, 11, 13, 17, 19};
+    protected final long[] firstPrimals = new long[]{2, 3, 5, 7, 11, 13, 17, 19};
 
     private final TLongByteMap foundPrimals = new TLongByteHashMap(
             new long[]{1, 2, 3, 5, 7, 9, 11, 13, 15, 17, 19},
             new byte[]{0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1}
     );
 
-    private final TLongObjectMap<TLongList> primalFactorsCache;
-    private final TLongObjectMap<TLongIntMap> primalFactorsMapCache;
-    private final TLongObjectMap<SparseFactorsMap> primalFactorsSparseMapCache;
-
-    public PrimalCache() {
-        this(true);
-    }
-
-    public PrimalCache(boolean useFactorsCache) {
-        if (useFactorsCache) {
-            primalFactorsCache = new TLongObjectHashMap<>();
-            primalFactorsMapCache = new TLongObjectHashMap<>();
-            primalFactorsSparseMapCache = new TLongObjectHashMap<>();
-        } else {
-            primalFactorsCache = TUtils.nullLongObjectMap();
-            primalFactorsMapCache = TUtils.nullLongObjectMap();
-            primalFactorsSparseMapCache = TUtils.nullLongObjectMap();
-        }
-    }
 
     public boolean isPrimal(long num) {
 //        long start = System.currentTimeMillis();
@@ -71,112 +46,6 @@ public class PrimalCache implements Iterable<Long> {
         return LongStream.generate(generator::nextPrimal);
     }
 
-    /**
-     * Returns primal factors of the number in natural order. If the number is primal - return it
-     *
-     * @param number number to factorize
-     * @return factors of the number in natural order
-     */
-    public TLongList factorize(long number) {
-        final TLongList cachedMap = primalFactorsCache.get(number);
-        if (cachedMap != null) {
-            return cachedMap;
-        }
-
-        TLongList result = new TLongArrayList();
-        doFactorize(result, number, true);
-        result.sort();
-
-        if (result.size() > 1) {
-            primalFactorsCache.put(number, result);
-        }
-        return result;
-    }
-
-    /**
-     * Returns primal factors as map: key = factor, value = exponent
-     *
-     * @param number number to factorize
-     * @return factors of the number
-     */
-    public TLongIntMap factorizeMap(long number) {
-        final TLongIntMap cachedMap = primalFactorsMapCache.get(number);
-        if (cachedMap != null) {
-            return cachedMap;
-        }
-
-        TLongIntMap result = new TLongIntHashMap();
-        doFactorizeMap(result, number, true);
-
-        primalFactorsMapCache.put(number, result);
-        return result;
-    }
-
-    /**
-     * Returns primal factors as map: key = factor, value = exponent
-     *
-     * @param number number to factorize
-     * @return factors of the number
-     */
-    public SparseFactorsMap factorizeSparseMap(long number) {
-        final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
-        if (cachedMap != null) {
-            return cachedMap;
-        }
-
-        SparseFactorsMap result = new SparseFactorsMap();
-        doFactorizeSparseMap(result, number, true);
-
-        primalFactorsSparseMapCache.put(number, result);
-        return result;
-    }
-
-    /**
-     * Returns primal factors of the number in natural order. If the number is primal - return it
-     *
-     * @param number number to factorize
-     * @return factors of the number in natural order
-     */
-    public TLongSet allFactors(long number) {
-        TLongIntMap factorsMap = new TLongIntHashMap();
-        doFactorizeMap(factorsMap, number, true);
-
-        TLongSet allFactors = collectAllFactors(factorsMap);
-        allFactors.remove(number);
-        return allFactors;
-    }
-
-    public TLongSet collectAllFactors(TLongIntMap factorsMap) {
-        TLongHashSet result = new TLongHashSet();
-        result.add(1);
-        long[] keys = factorsMap.keys();
-        if (keys.length == 1) {
-            long primalFactor = keys[0];
-            int amount = factorsMap.get(primalFactor);
-            long f = 1;
-            while (amount-- > 0) {
-                f *= primalFactor;
-                result.add(f);
-            }
-        } else {
-            for (long primalFactor : keys) {
-                int amount = factorsMap.remove(primalFactor);
-                TLongSet factors = collectAllFactors(factorsMap);
-                factorsMap.put(primalFactor, amount);
-                result.addAll(factors);
-                long f = 1;
-                while (amount-- > 0) {
-                    f *= primalFactor;
-                    TLongIterator it = factors.iterator();
-                    while (it.hasNext()) {
-                        result.add(f * it.next());
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
     public TLongSet getPrimalsTill(long number) {
         TLongSet primals = new TLongHashSet();
         if (number > 2) {
@@ -190,135 +59,6 @@ public class PrimalCache implements Iterable<Long> {
             }
         }
         return primals;
-    }
-
-    private void doFactorize(TLongList result, long number, boolean firstElement) {
-        if (number <= 0) {
-            return;
-        }
-        if (isPrimal(number)) {
-            if (!firstElement) {
-                result.add(number);
-            }
-            return;
-        }
-
-        final TLongList cachedFactors = primalFactorsCache.get(number);
-        if (cachedFactors != null) {
-            result.addAll(cachedFactors);
-            return;
-        }
-
-        long limit = (long) Math.sqrt(number);
-        for (long factor : firstPrimals) {
-            if (factor > limit) {
-                return;
-            }
-            if (number % factor == 0) {
-                result.add(factor);
-                doFactorize(result, number / factor, false);
-                return;
-            }
-        }
-
-        long largestPrimal = 23;
-        while (largestPrimal <= limit) {
-            if (checkPrimal(largestPrimal)) {
-                if (number % largestPrimal == 0) {
-                    result.add(largestPrimal);
-                    doFactorize(result, number / largestPrimal, false);
-                    return;
-                }
-            }
-            largestPrimal += 2;
-        }
-    }
-
-    private void doFactorizeMap(TLongIntMap result, long number, boolean firstElement) {
-        if (number <= 0) {
-            return;
-        }
-        if (isPrimal(number)) {
-            if (!firstElement) {
-                result.adjustOrPutValue(number, 1, 1);
-            }
-            return;
-        }
-
-        final TLongIntMap cachedMap = primalFactorsMapCache.get(number);
-        if (cachedMap != null) {
-            cachedMap.forEachEntry((a, b) -> {
-                result.adjustOrPutValue(a, b, b);
-                return true;
-            });
-            return;
-        }
-
-        long limit = (long) Math.sqrt(number);
-        for (long factor : firstPrimals) {
-            if (factor > limit) {
-                return;
-            }
-            if (number % factor == 0) {
-                result.adjustOrPutValue(factor, 1, 1);
-                doFactorizeMap(result, number / factor, false);
-                return;
-            }
-        }
-
-        long largestPrimal = 23;
-        while (largestPrimal <= limit) {
-            if (checkPrimal(largestPrimal)) {
-                if (number % largestPrimal == 0) {
-                    result.adjustOrPutValue(largestPrimal, 1, 1);
-                    doFactorizeMap(result, number / largestPrimal, false);
-                    return;
-                }
-            }
-            largestPrimal += 2;
-        }
-    }
-
-    private void doFactorizeSparseMap(SparseFactorsMap result, long number, boolean firstElement) {
-        if (number <= 0) {
-            return;
-        }
-        if (isPrimal(number)) {
-            if (!firstElement) {
-                result.adjustOrPutValue(number, 1, 1);
-            }
-            return;
-        }
-
-        final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
-        if (cachedMap != null) {
-            result.addMap(cachedMap);
-            return;
-        }
-
-        long limit = (long) Math.sqrt(number);
-        for (long factor : firstPrimals) {
-            if (factor > limit) {
-                return;
-            }
-            if (number % factor == 0) {
-                result.adjustOrPutValue(factor, 1, 1);
-                doFactorizeSparseMap(result, number / factor, false);
-                return;
-            }
-        }
-
-        long largestPrimal = 23;
-        while (largestPrimal <= limit) {
-            if (checkPrimal(largestPrimal)) {
-                if (number % largestPrimal == 0) {
-                    result.adjustOrPutValue(largestPrimal, 1, 1);
-                    doFactorizeSparseMap(result, number / largestPrimal, false);
-                    return;
-                }
-            }
-            largestPrimal += 2;
-        }
     }
 
     private boolean checkPrimal(long num) {

@@ -5,7 +5,8 @@ import gnu.trove.set.hash.TLongHashSet;
 import org.xblackcat.euler.ann.EntryPoint;
 import org.xblackcat.euler.ann.InputData;
 import org.xblackcat.euler.ann.ResultDescription;
-import org.xblackcat.euler.util.PrimalCache;
+import org.xblackcat.euler.util.MathUtils;
+import org.xblackcat.euler.util.TFactorizer;
 
 import java.util.Arrays;
 
@@ -24,11 +25,11 @@ public class Problem23 {
 
     @EntryPoint
     public long sum() {
-        PrimalCache primalCache = new PrimalCache();
+        TFactorizer factorizer = new TFactorizer();
         final TLongSet abundantNumbers = new TLongHashSet();
 
         for (int i = 1; i < LARGEST_NUMBER_TO_CHECK; i++) {
-            TLongSet factors = primalCache.allFactors(i);
+            TLongSet factors = MathUtils.allFactors(factorizer.factorize((long) i));
             long sumOfFactors = Arrays.stream(factors.toArray()).sum();
 
             if (sumOfFactors > i) {
