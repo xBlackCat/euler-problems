@@ -28,9 +28,25 @@ public class PrimalCache implements Iterable<Long> {
             new byte[]{0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1}
     );
 
-    private final TLongObjectMap<TLongList> primalFactorsCache = new TLongObjectHashMap<>();
-    private final TLongObjectMap<TLongIntMap> primalFactorsMapCache = new TLongObjectHashMap<>();
-    private final TLongObjectMap<SparseFactorsMap> primalFactorsSparseMapCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<TLongList> primalFactorsCache;
+    private final TLongObjectMap<TLongIntMap> primalFactorsMapCache;
+    private final TLongObjectMap<SparseFactorsMap> primalFactorsSparseMapCache;
+
+    public PrimalCache() {
+        this(true);
+    }
+
+    public PrimalCache(boolean useFactorsCache) {
+        if (useFactorsCache) {
+            primalFactorsCache = new TLongObjectHashMap<>();
+            primalFactorsMapCache = new TLongObjectHashMap<>();
+            primalFactorsSparseMapCache = new TLongObjectHashMap<>();
+        } else {
+            primalFactorsCache = TUtils.nullLongObjectMap();
+            primalFactorsMapCache = TUtils.nullLongObjectMap();
+            primalFactorsSparseMapCache = TUtils.nullLongObjectMap();
+        }
+    }
 
     public boolean isPrimal(long num) {
 //        long start = System.currentTimeMillis();
@@ -105,14 +121,14 @@ public class PrimalCache implements Iterable<Long> {
     public SparseFactorsMap factorizeSparseMap(long number) {
         final SparseFactorsMap cachedMap = primalFactorsSparseMapCache.get(number);
         if (cachedMap != null) {
-            return cachedMap.clone();
+            return cachedMap;
         }
 
         SparseFactorsMap result = new SparseFactorsMap();
         doFactorizeSparseMap(result, number, true);
 
         primalFactorsSparseMapCache.put(number, result);
-        return result.clone();
+        return result;
     }
 
     /**
