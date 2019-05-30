@@ -72,7 +72,7 @@ public class ProblemStarter {
 
         try {
             System.out.println("### Run Problem #" + n);
-            Object problemInstance = problemClass.newInstance();
+            Object problemInstance = problemClass.getDeclaredConstructor().newInstance();
 
             long start = System.currentTimeMillis();
             Object result = method.invoke(problemInstance, inputData);
