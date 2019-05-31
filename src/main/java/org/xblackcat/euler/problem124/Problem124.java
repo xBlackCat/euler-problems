@@ -22,12 +22,12 @@ public class Problem124 {
 
     @EntryPoint
     public long firstMonthDaySundays(int k, int n) {
-
-        long[][] array = LongStream.rangeClosed(1, n)
+        return LongStream.rangeClosed(1, n)
                 .mapToObj(i -> new long[]{rad(i), i})
                 .sorted(Comparator.<long[]>comparingLong(l -> l[0]).thenComparing(l -> l[1]))
-                .toArray(long[][]::new);
-        return array[k - 1][1];
+                .skip(k-1)
+                .findFirst()
+                .orElseThrow()[1];
     }
 
     private long rad(long i) {
